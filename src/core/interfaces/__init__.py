@@ -1,0 +1,3 @@
+from .role_interface import IRoleRepository
+from .user_interface import IUserRepository
+from .permission_interface import IPermissionRepository
