@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: sakiladb/postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: p_ssW0rd
+      POSTGRES_DB: sakila
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  postgres-init:
+    image: postgres:15
+    depends_on:
+      - postgres
+    environment:
+      PGPASSWORD: p_ssW0rd
+    volumes:
+      - ./create-auth-db.sh:/create-auth-db.sh
+    entrypoint: >
+      bash -c "
+      until pg_isready -h postgres -p 5432 -U sakila; do sleep 1; done &&
+      bash /create-auth-db.sh
+      "
+    restart: "no"
+
+volumes:
+  postgres_data:
