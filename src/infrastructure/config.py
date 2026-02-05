@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
+# я вшил все сюда, я плохой. мне лень везде создавать env для таких проектиков
 class Settings(BaseSettings):
     SAKILA_DATABASE_URL: str = 'postgresql://sakila:p_ssW0rd@localhost:5432/sakila'
     AUTH_DATABASE_URL: str = 'postgresql://postgres:admin@localhost:5434/auth_db'
