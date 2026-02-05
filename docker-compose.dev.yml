@@ -1,4 +1,18 @@
 services:
+  server:
+    build: .
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - postgres-sakila
+      - postgres-auth
+    volumes:
+      - .:/app
+    command:
+      [ "/wait-for-it.sh", "postgres-auth:5434", "--", "sh", "-c",
+        "alembic upgrade head && uvicorn server.main:app --host 0.0.0.0 --port 8000 --reload" ]
+
   postgres-sakila:
     image: sakiladb/postgres:latest
     ports:

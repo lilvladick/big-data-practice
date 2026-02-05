@@ -4,6 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     SAKILA_DATABASE_URL: str = 'postgresql://sakila:p_ssW0rd@localhost:5432/sakila'
     AUTH_DATABASE_URL: str = 'postgresql://postgres:admin@localhost:5434/auth_db'
+
+    SPARK_JDBC_URL: str = "jdbc:postgresql://postgres-sakila:5432/sakila"
+    SPARK_JDBC_USER: str = "postgres"
+    SPARK_JDBC_PASSWORD: str = "admin"
+
     SECRET_KEY: str = 'super-secret'
     JWT_ALGORITHM: str = 'HS256'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
