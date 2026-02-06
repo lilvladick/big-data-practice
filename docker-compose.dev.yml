@@ -10,8 +10,8 @@ services:
     volumes:
       - .:/app
     command:
-      [ "/wait-for-it.sh", "postgres-auth:5434", "--", "sh", "-c",
-        "alembic upgrade head && uvicorn server.main:app --host 0.0.0.0 --port 8000 --reload" ]
+      [ "/wait-for-it.sh", "postgres-auth:5432", "-t", "60","--", "sh", "-c",
+        "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload" ]
 
   postgres-sakila:
     image: sakiladb/postgres:latest

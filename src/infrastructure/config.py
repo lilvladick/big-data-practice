@@ -2,8 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # я вшил все сюда, я плохой. мне лень везде создавать env для таких проектиков
 class Settings(BaseSettings):
-    SAKILA_DATABASE_URL: str = 'postgresql://sakila:p_ssW0rd@localhost:5432/sakila'
-    AUTH_DATABASE_URL: str = 'postgresql://postgres:admin@localhost:5434/auth_db'
+    SAKILA_DATABASE_URL: str = 'postgresql://sakila:p_ssW0rd@postgres-sakila:5432/sakila'
+    AUTH_DATABASE_URL: str = 'postgresql://postgres:admin@postgres-auth:5432/auth_db'
 
     SPARK_JDBC_URL: str = "jdbc:postgresql://postgres-sakila:5432/sakila"
     SPARK_JDBC_USER: str = "postgres"
