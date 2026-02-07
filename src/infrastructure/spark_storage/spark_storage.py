@@ -31,6 +31,7 @@ class SparkStorage(ISparkRepository):
         return (spark.read.format("jdbc")
                 .option("url", self.jdbc_url)
                 .option("dbtable", table_name)
+                .option("driver", "org.postgresql.Driver")
                 .options(**self.jdbc_properties)
                 .load())
 
@@ -39,11 +40,12 @@ class SparkStorage(ISparkRepository):
         return (spark.read.format("jdbc")
                 .option("url", self.jdbc_url)
                 .option("dbtable", f"({query}) AS subquery")
+                .option("driver", "org.postgresql.Driver")
                 .options(**self.jdbc_properties)
                 .load())
 
     def to_pandas(self, df: SparkDataFrame) -> pd.DataFrame:
-        return df.toPandas() # почему ты кидаешь мне варинг?
+        return df.toPandas()
 
     def stop(self) -> None:
         if self.spark:

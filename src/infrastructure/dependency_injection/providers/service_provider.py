@@ -1,7 +1,9 @@
 from dishka import Provider, Scope, provide
 
 from src.core.interfaces import IUserRepository, IRoleRepository, IPermissionRepository
+from src.core.interfaces.data_aggregation_interface import IDataAggregationRepository
 from src.core.services import UserService, RoleService, PermissionService, AuthService
+from src.core.services.data_aggregation_service import DataAggregationService
 from src.infrastructure.config import settings
 from src.infrastructure.spark_storage.spark_storage import SparkStorage
 
@@ -25,12 +27,16 @@ class ServiceProvider(Provider):
                          permission_repository: IPermissionRepository) -> AuthService:
         return AuthService(user_repository, permission_repository)
 
+    @provide(scope=Scope.REQUEST)
+    def get_aggregation_service(self, data_aggregation_repository: IDataAggregationRepository) -> DataAggregationService:
+        return DataAggregationService(data_aggregation_repository)
+
     @provide(scope=Scope.APP)
     def get_spark_storage_service(self) -> SparkStorage:
         return SparkStorage(
-            jdbc_url=settings.spark_jdbc_url,
+            jdbc_url=settings.SPARK_JDBC_URL,
             jdbc_properties={
-                "user": settings.spark_jdbc_user,
-                "password": settings.spark_jdbc_password
+                "user": settings.SPARK_JDBC_USER,
+                "password": settings.SPARK_JDBC_PASSWORD
             }
         )

@@ -1,2 +1,2 @@
 from .service_provider import ServiceProvider
-from .sqlalchemy_provider import SQLAlchemyProvider
+from .repository_provider import RepositoryProvider

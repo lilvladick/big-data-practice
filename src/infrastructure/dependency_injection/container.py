@@ -1,5 +1,5 @@
 from dishka import make_async_container
 
-from src.infrastructure.dependency_injection.providers import SQLAlchemyProvider, ServiceProvider
+from src.infrastructure.dependency_injection.providers import RepositoryProvider, ServiceProvider
 
-container = make_async_container(SQLAlchemyProvider(), ServiceProvider())
+container = make_async_container(RepositoryProvider(), ServiceProvider())

@@ -6,8 +6,8 @@ class Settings(BaseSettings):
     AUTH_DATABASE_URL: str = 'postgresql://postgres:admin@postgres-auth:5432/auth_db'
 
     SPARK_JDBC_URL: str = "jdbc:postgresql://postgres-sakila:5432/sakila"
-    SPARK_JDBC_USER: str = "postgres"
-    SPARK_JDBC_PASSWORD: str = "admin"
+    SPARK_JDBC_USER: str = "sakila"
+    SPARK_JDBC_PASSWORD: str = "p_ssW0rd"
 
     SECRET_KEY: str = 'super-secret'
     JWT_ALGORITHM: str = 'HS256'

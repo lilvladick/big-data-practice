@@ -11,6 +11,9 @@ class DataAggregationService:
         self.cache_dir = cache_dir
         self.user_temp_dirs: Dict[str, Path] = {}
 
+        cache_path = Path(self.cache_dir)
+        cache_path.mkdir(parents=True, exist_ok=True)
+
     # чисто для админов функция, чтобы создавать дамб бдшки спарком, чтобы не юзать спарк всегда
     def load_base_csv(self, force_refresh: bool = False) -> pd.DataFrame:
         csv_path = Path(self.cache_dir) / "sakila_united_data.csv"
@@ -22,3 +25,6 @@ class DataAggregationService:
 
     # вообще я сначала думал сделать тут для каждого юзера свой csv чтобы можно было с ними играть,
     # но пока что мне лень
+
+    def get_dataframe(self) -> pd.DataFrame:
+        return self.load_base_csv()
