@@ -94,7 +94,6 @@ dmypy.json
 
 .pyre/
 
-.dockerignore
 Dockerfile.*.local
 .gitignore
 README.md

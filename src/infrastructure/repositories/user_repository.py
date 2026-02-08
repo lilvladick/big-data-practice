@@ -1,4 +1,5 @@
-from typing import Optional, List
+import uuid
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import exists, select
@@ -19,11 +20,12 @@ class UserRepository(IUserRepository):
     def get_by_id(self, user_id: UUID) -> Optional[User]:
         return self.session.query(User).filter(User.id == user_id).first()
 
-    def get_all_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+    def get_all_users(self, skip: int = 0, limit: int = 100) -> list[type[User]]:
         return self.session.query(User).offset(skip).limit(limit).all()
 
     def create_user(self, user: UserCreate) -> User:
         db_user = User(
+            id = uuid.uuid4(),
             first_name=user.first_name,
             last_name=user.last_name,
             patronymic=user.patronymic,
