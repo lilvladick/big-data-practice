@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     openjdk-21-jre-headless \
     && rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+# для винды поменять на java-21-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-arm64
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV SPARK_LOCAL_IP=127.0.0.1
 
