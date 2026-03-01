@@ -1,5 +1,11 @@
-from typing import Dict
+from typing import Dict, List
+
+import numpy as np
 import pandas as pd
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 
 class DataAnalysisService:
@@ -47,3 +53,98 @@ class DataAnalysisService:
         }
 
     # TODO: многомерный анализ да да снизу потом
+    @staticmethod
+    def multivariate_analysis(df: pd.DataFrame, columns: List[str]) -> Dict:
+        for col in columns:
+            if col not in df.columns:
+                raise ValueError(f"Column '{col}' not found")
+            if not pd.api.types.is_numeric_dtype(df[col]):
+                raise TypeError(f"Column '{col}' must be numeric for multivariate analysis")
+
+        sub_df = df[columns].dropna()
+        if sub_df.empty:
+            raise ValueError("No data available after dropping missing values")
+
+        correlation = sub_df.corr().to_dict()
+        covariance = sub_df.cov().to_dict()
+
+        return {
+            "correlation": correlation,
+            "covariance": covariance,
+            "num_observations": len(sub_df),
+            "columns": columns
+        }
+
+    @staticmethod
+    def knn_classification(df: pd.DataFrame, feature_columns: List[str], target_column: str, k: int = 5,
+                           test_size: float = 0.25, random_state: int = 42, scale_features: bool = True,
+                           weights: str = "uniform", metric: str = "euclidean") -> Dict:
+
+        required_cols = feature_columns + [target_column]
+        missing = [c for c in required_cols if c not in df.columns]
+        if missing:
+            raise ValueError(f"Отсутствуют колонки: {', '.join(missing)}")
+
+        sub_df = df[required_cols].dropna().copy()
+        if len(sub_df) < 20:
+            raise ValueError(f"Слишком мало данных после dropna: {len(sub_df)} строк")
+
+        if sub_df[target_column].nunique() < 2:
+            raise ValueError(f"Целевая переменная '{target_column}' имеет меньше 2 уникальных значений")
+
+        X = sub_df[feature_columns].values.astype(np.float64)
+        y_raw = sub_df[target_column]
+
+        if not np.issubdtype(y_raw.dtype, np.number):
+            le = LabelEncoder()
+            y = le.fit_transform(y_raw)
+            class_names = le.classes_.tolist()
+        else:
+            y = y_raw.values.astype(int)
+            class_names = np.unique(y).tolist()
+
+        scaler = None
+        if scale_features:
+            scaler = StandardScaler()
+            X = scaler.fit_transform(X)
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y,
+            test_size=test_size,
+            random_state=random_state,
+            stratify=y
+        )
+
+        knn = KNeighborsClassifier(
+            n_neighbors=k,
+            weights=weights,
+            metric=metric,
+            n_jobs=-1
+        )
+        knn.fit(X_train, y_train)
+
+        y_pred = knn.predict(X_test)
+
+        acc = accuracy_score(y_test, y_pred)
+        report = classification_report(y_test, y_pred, output_dict=True, zero_division=0)
+        cm = confusion_matrix(y_test, y_pred).tolist()
+
+        result = {
+            "accuracy": float(acc),
+            "classification_report": report,
+            "confusion_matrix": cm,
+            "n_train": len(X_train),
+            "n_test": len(X_test),
+            "k": k,
+            "target_column": target_column,
+            "feature_columns": feature_columns,
+            "class_names": class_names,
+            "weights": weights,
+            "metric": metric,
+            "model": knn,
+        }
+
+        if scaler:
+            result["scaler"] = scaler
+
+        return result

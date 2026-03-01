@@ -3,7 +3,7 @@ from typing import Annotated
 import pandas as pd
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status
 
 from src.core.services.data_aggregation_service import DataAggregationService
 from src.core.services.data_analysis_service import DataAnalysisService
@@ -24,7 +24,7 @@ def get_univariate_column_analysis(column: str, aggregation_service: Annotated[D
         result = DataAnalysisService.univariate_analysis(df, column)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error: {str(e)}")
 
 @router.get("/categorial/{column}")
 def get_categorial_analysis(column: str, aggregation_service: Annotated[DataAggregationService, FromDishka()]):
@@ -34,12 +34,12 @@ def get_categorial_analysis(column: str, aggregation_service: Annotated[DataAggr
         result = DataAnalysisService.categorical_analysis(df, column)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error: {str(e)}")
 
 
 def _validate_column(df: pd.DataFrame, column: str, is_categorical: bool = False):
     if column not in df.columns:
-        raise HTTPException(status_code=404, detail=f"Column '{column}' not found.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Column '{column}' not found.")
 
     if not is_categorical and not pd.api.types.is_numeric_dtype(df[column]):
-        raise HTTPException(status_code=400, detail=f"Column '{column}' must be numeric.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Column '{column}' must be numeric.")
