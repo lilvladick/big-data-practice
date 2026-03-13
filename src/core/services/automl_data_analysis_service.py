@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder
 
 class AutoMLDataAnalysisService:
     @staticmethod
-    def pycaret_automl(df: pd.DataFrame, feature_columns: List[str], target_column: str,
+    def flaml_automl(df: pd.DataFrame, feature_columns: List[str], target_column: str,
                        test_size: float = 0.25, time_budget: int = 300,
                        n_select: int = 5, metric: str = 'accuracy') -> Dict:
         required_cols = feature_columns + [target_column]

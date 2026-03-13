@@ -49,12 +49,14 @@ async def knn_classification_analysis(aggregation_service: Annotated[DataAggrega
 async def automl_classification_analysis(
         aggregation_service: Annotated[DataAggregationService, FromDishka()], target_column: str,
         feature_columns: List[str] = Query(...), columns: List[str] = Query([]),
-        test_size: float = Query(0.25, ge=0.1, le=0.5), fold: int = Query(5, ge=3, le=10),
+        test_size: float = Query(0.25, ge=0.1, le=0.5),
         n_select: int = Query(5, ge=3, le=15)):
     df = aggregation_service.get_dataframe()
     _validate_columns(df, columns, is_categorical=True)
     try:
-        result = [] # потом
+        result = AutoMLDataAnalysisService.flaml_automl(df=df, feature_columns=feature_columns,
+                                                        target_column=target_column, test_size=test_size,
+                                                        n_select=n_select)
         return result
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"AutoML Error: {str(e)}")
