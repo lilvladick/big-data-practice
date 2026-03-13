@@ -2,3 +2,6 @@ from .role_service import RoleService
 from .permission_service import PermissionService
 from .user_service import UserService
 from .auth_service import AuthService
+from .automl_data_analysis_service import AutoMLDataAnalysisService
+from .data_analysis_service import DataAnalysisService
+from .data_aggregation_service import DataAggregationService

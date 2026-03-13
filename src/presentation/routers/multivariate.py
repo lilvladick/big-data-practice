@@ -6,6 +6,7 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, HTTPException, status, Query
 
 from src.core.services.data_aggregation_service import DataAggregationService
+from src.core.services.automl_data_analysis_service import AutoMLDataAnalysisService
 from src.core.services.data_analysis_service import DataAnalysisService
 
 router = APIRouter(route_class=DishkaRoute)
@@ -42,6 +43,21 @@ async def knn_classification_analysis(aggregation_service: Annotated[DataAggrega
         return result
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error: {str(e)}")
+
+
+@router.get("/automl/{target_column}")
+async def automl_classification_analysis(
+        aggregation_service: Annotated[DataAggregationService, FromDishka()], target_column: str,
+        feature_columns: List[str] = Query(...), columns: List[str] = Query([]),
+        test_size: float = Query(0.25, ge=0.1, le=0.5), fold: int = Query(5, ge=3, le=10),
+        n_select: int = Query(5, ge=3, le=15)):
+    df = aggregation_service.get_dataframe()
+    _validate_columns(df, columns, is_categorical=True)
+    try:
+        result = [] # потом
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"AutoML Error: {str(e)}")
 
 
 def _validate_columns(df: pd.DataFrame, columns: List[str], is_categorical: bool = False):

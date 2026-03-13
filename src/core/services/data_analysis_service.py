@@ -52,7 +52,6 @@ class DataAnalysisService:
             'unique': int(df[column].nunique())
         }
 
-    # TODO: многомерный анализ да да снизу потом
     @staticmethod
     def multivariate_analysis(df: pd.DataFrame, columns: List[str]) -> Dict:
         for col in columns:
@@ -83,14 +82,14 @@ class DataAnalysisService:
         required_cols = feature_columns + [target_column]
         missing = [c for c in required_cols if c not in df.columns]
         if missing:
-            raise ValueError(f"Отсутствуют колонки: {', '.join(missing)}")
+            raise ValueError(f"Missing columns: {', '.join(missing)}")
 
         sub_df = df[required_cols].dropna().copy()
         if len(sub_df) < 20:
-            raise ValueError(f"Слишком мало данных после dropna: {len(sub_df)} строк")
+            raise ValueError(f"Too little data after dropna: {len(sub_df)} rows")
 
         if sub_df[target_column].nunique() < 2:
-            raise ValueError(f"Целевая переменная '{target_column}' имеет меньше 2 уникальных значений")
+            raise ValueError(f"Target variable '{target_column}' has less than 2 unique values")
 
         X = sub_df[feature_columns].values.astype(np.float64)
         y_raw = sub_df[target_column]
