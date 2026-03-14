@@ -7,6 +7,29 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
+# наверное надо вынести, но пусть вот тут полежит
+import json
+
+def _convert_numpy(obj):
+    try:
+        if isinstance(obj, dict):
+            return {k: _convert_numpy(v) for k, v in obj.items()}
+        elif isinstance(obj, (list, tuple, set)):
+            return [_convert_numpy(i) for i in obj]
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, (np.integer, np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
+        elif pd.isna(obj):
+            return None
+        json.dumps(obj)
+        return obj
+    except (TypeError, ValueError):
+        return str(obj)
 
 class AutoMLDataAnalysisService:
     @staticmethod
@@ -63,7 +86,7 @@ class AutoMLDataAnalysisService:
                 rows.append({
                     'learner': learner_name,
                     'best_loss': float(losses.get(learner_name, np.nan)),
-                    'best_config': cfg,
+                    'best_config': _convert_numpy(cfg),
                 })
             lb_df = pd.DataFrame(rows)
             if not lb_df.empty:
@@ -84,28 +107,26 @@ class AutoMLDataAnalysisService:
             leaderboard = [{
                 'learner': automl.best_estimator,
                 'best_loss': float(getattr(automl, 'best_loss', np.nan)),
-                'best_config': getattr(automl, 'best_config', {}),
+                'best_config': _convert_numpy(getattr(automl, 'best_config', {})),
                 'best_config_train_time': float(getattr(automl, 'best_config_train_time', np.nan))
             }]
 
         result = {
             "accuracy": float(acc),
-            "classification_report": report,
+            "classification_report": _convert_numpy(report),
             "confusion_matrix": cm,
-            "n_train": len(X_train),
-            "n_test": len(X_test),
-            "best_model_object": automl.model.estimator,
-            "best_estimator_name": automl.best_estimator,
+            "n_train": int(len(X_train)),
+            "n_test": int(len(X_test)),
+            "best_estimator_name": str(automl.best_estimator),
             "target_column": target_column,
             "feature_columns": feature_columns,
-            "class_names": class_names,
-            "leaderboard": leaderboard,
+            "class_names": [str(c) for c in class_names],
+            "leaderboard": _convert_numpy(leaderboard),
             "top_models_info": [
-                f"{row['learner']}: best_loss={row.get('best_loss', np.nan):.4f}, time={row.get('best_config_train_time', np.nan):.1f}s"
+                f"{row['learner']}: best_loss={float(row.get('best_loss', 0.0)):.4f}, time={float(row.get('best_config_train_time', 0.0)):.1f}s"
                 for row in leaderboard
             ],
-            "automl_model": automl,
-            "best_config": automl.best_config,
+            "best_config": _convert_numpy(automl.best_config),
             "optimize_metric": metric,
             "time_budget": time_budget
         }

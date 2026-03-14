@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # для винды поменять на java-21-openjdk-amd64
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-arm64
+# для unix поменять на java-21-openjdk-arm64
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV SPARK_LOCAL_IP=127.0.0.1
 

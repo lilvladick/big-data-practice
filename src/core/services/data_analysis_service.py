@@ -139,11 +139,7 @@ class DataAnalysisService:
             "feature_columns": feature_columns,
             "class_names": class_names,
             "weights": weights,
-            "metric": metric,
-            "model": knn,
+            "metric": metric
         }
-
-        if scaler:
-            result["scaler"] = scaler
 
         return result
