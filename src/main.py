@@ -3,7 +3,7 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 
 from src.infrastructure.dependency_injection import container
-from src.presentation.routers import multivariate, users, univariate, auth, admin
+from src.presentation.routers import multivariate, users, univariate, auth, admin, chatbot
 
 app = FastAPI()
 
@@ -14,6 +14,7 @@ app.include_router(auth.router, prefix="/auth", tags=["authorization"])
 app.include_router(admin.router, prefix="/admin", tags=["admin"])
 app.include_router(multivariate.router, prefix="/multivariate", tags=["multivariate"])
 app.include_router(univariate.router, prefix="/univariate", tags=["univariate"])
+app.include_router(chatbot.router, prefix="/chatbot", tags=["chatbot"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

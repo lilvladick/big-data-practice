@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide
 
+from src.infrastructure.services.data_science_rag_service import DataScienceRAGService
 from src.core.interfaces import IUserRepository, IRoleRepository, IPermissionRepository
 from src.core.interfaces.data_aggregation_interface import IDataAggregationRepository
 from src.core.services import UserService, RoleService, PermissionService, AuthService
@@ -30,6 +31,10 @@ class ServiceProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def get_aggregation_service(self, data_aggregation_repository: IDataAggregationRepository) -> DataAggregationService:
         return DataAggregationService(data_aggregation_repository)
+    
+    @provide(scope=Scope.APP)
+    def get_data_science_rag_service(self) -> DataScienceRAGService:
+        return DataScienceRAGService()
 
     @provide(scope=Scope.APP)
     def get_spark_storage_service(self) -> SparkStorage:

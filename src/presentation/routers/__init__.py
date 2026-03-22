@@ -1,1 +1,1 @@
-from . import univariate, multivariate, users, auth, admin
+from . import univariate, multivariate, users, auth, admin, chatbot
